@@ -1,0 +1,5 @@
+django
+opencv-python
+torch==1.10.2
+dlib
+cnocr
