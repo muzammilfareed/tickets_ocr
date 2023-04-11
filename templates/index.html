@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <title>Tickets Ocr</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+    .overlay{
+        display: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        /* background: rgba(255,255,255,0.8) url("https://raw.githubusercontent.com/projectz-tayyab/photo_app/main/loader.gif") center no-repeat;*/
+        background: rgba(255,255,255,0.8) url("/static/loader/loading.gif") center no-repeat;
+    }
+    body{
+        text-align: center;
+    }
+    /* Turn off scrollbar when body element has the loading class */
+    body.loading{
+        overflow: hidden;
+    }
+    /* Make spinner image visible when body element has the loading class */
+    body.loading .overlay{
+        display: block;
+    }
+    .ScrollStyle
+    {
+        max-height: 335px;
+        overflow-y: scroll;
+    }
+</style>
+
+
+</head>
+<body>
+<div class="overlay"></div>
+<div class="container">
+  <form id="myForm">
+  <h2>Tickets Ocr</h2>
+
+
+    <div class="form-group">
+      <label for="file">Select File:</label>
+      <input type="file"  class="form-control" id="file" name="file">
+<!--      <input type="file" accept="text/*" class="form-control" id="file" name="file">-->
+    </div>
+
+    <button type="button" class="btn btn-primary" onclick="myFunction()" >Submit</button>
+</form>
+
+<br>
+  <a href="{% static 'result/result/results.json' %}" download="" onclick="myfun()" id="dowload" class="btn btn-success">Dowload Json File</a>
+
+
+  <br>
+  <!-- <caption>Tickets Data</caption> -->
+  <table id="data_table" class="table table-bordered mt-5"> <strong>
+   
+    <tr>
+      <th scope="col">Shop ID</th>
+      <th scope="col">Date & Time</th>
+      <th scope="col">Transaction</th>
+      <th scope="col">Barcode</th>
+<!--                <th scope="col">Class</th>-->
+    </tr>
+  <tbody id="appended_res">
+    <td class="sh_id"></td>
+    <td class="d_t"></td>
+    <td class="transaction"></td>
+    <td class="barcode"></td>
+  </tbody>
+  </strong> </table>
+</div>
+
+<script>
+
+$( document ).ready(function() {
+  $("#dowload").hide();
+  $('#appended_res').hide();
+});
+
+function myfun(){
+ 
+ $("#dowload").hide();
+ 
+
+
+ 
+  
+}
+
+function myFunction() {
+
+   var image_path = $("#file").prop('files')[0];
+
+   if ( image_path == undefined)
+   {
+   alert("Please select the file");
+   }
+  else {
+    
+
+    var form_data = new FormData();
+    form_data.append("file", image_path);
+    // form_data.append("background_flag", flag);
+    $.ajax({
+        url: "/",
+        type: "POST",
+        // dataType: 'json',
+        data: form_data,
+        contentType: false,
+        //   contentType: false,
+        //   processData: false,
+        //   async: false,
+        // cache : false,
+        processData: false,
+        beforeSend: function () {
+            $("body").addClass("loading");
+        },
+        success: function () {
+            console.log("abc");
+        },
+        complete: function (result) {
+
+             $("body").removeClass("loading");
+             debugger;
+             $('#myForm')[0].reset();
+             
+             console.log(result['responseJSON']['json_path']);
+             var json_path = result['responseJSON']['json_path']
+             var sh_id = result['responseJSON']['sh_id']
+             var d_t = result['responseJSON']['d_t']
+             var transaction = result['responseJSON']['transaction']
+             var barcode = result['responseJSON']['barcode']
+             $('.sh_id').text(sh_id);
+             $('.d_t').text(d_t);
+             $('.transaction').text(transaction);
+             $('.barcode').text(barcode);
+             
+             
+             var flag = result['responseJSON']['flag']
+             if ( flag == true)
+             {
+              $("#dowload").show();
+              $('#appended_res').show();
+             }
+             else
+             {
+              alert("please send the valid image");
+             }
+
+
+             
+				      console.log(data_list)
+             
+
+
+             // window.location.href = "first.html";
+        },
+
+    });
+  }
+}
+
+
+// setInterval(get_progress_record, 2000);
+
+// function get_progress_record(){
+
+
+
+//     var form_data = new FormData();
+//     // form_data.append("background_flag", flag);
+//     $.ajax({
+//         url: "/get_progress_record/",
+//         type: "POST",
+//         // dataType: 'json',
+//         data: form_data,
+//         contentType: false,
+//         //   contentType: false,
+//         //   processData: false,
+//         //   async: false,
+//         // cache : false,
+//         processData: false,
+//         beforeSend: function () {
+//             $("body").addClass("loading");
+//         },
+//         success: function () {
+//             console.log("abc");
+//         },
+//         complete: function (data) {
+//              $("body").removeClass("loading");
+//              $("#dowload").show();
+//              // window.location.href = "first.html";
+//         },
+
+//     });
+
+// }
+
+
+
+
+
+</script>
+
+</body>
+</html>
